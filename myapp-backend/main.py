@@ -432,6 +432,11 @@ def get_data_warning():
     }
     return jsonify(result)
 
+@app.route('/data/refresh',methods=['GET'])
+def need_to_refresh():
+    return jsonify({
+        'type':0
+    })
 
 if __name__ == "__main__":
     app.run(port=2020, host="127.0.0.1", debug=True)

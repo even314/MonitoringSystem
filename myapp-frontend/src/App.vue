@@ -28,7 +28,6 @@ export default {
     // provide("名字自己取","传递的内容")
     provide("echarts",echarts)
     provide("axios",axios)
-    
     return {
       
     }

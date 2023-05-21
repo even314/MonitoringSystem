@@ -1,5 +1,5 @@
 <template >
-    <div>
+    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
         <h2>{{feature}}</h2>
         <div id="nsDom" class="chart">
     </div>
@@ -10,6 +10,7 @@
   import{onMounted,reactive,inject,onBeforeUnmount,nextTick,ref}from "vue"
   import dataService from '../../services/DataService.js'
   import {mounted, beforeDestroy, chart} from "../../utils/resize"
+  import { dataCache,writeData } from "@/utils/storageTools"
 
   export default {
     props:{
@@ -25,11 +26,13 @@
       realTime:{
         type:Boolean,
         default:false
-      }
+      },
+      setDisabled:ref
     },
     setup(props){
+        const loading=ref(true)
         let url='node_single_param?cluster='+props.cluster+'&feature='+props.feature
-        console.log(url)
+        // console.log(url)
         let $echarts=inject("echarts");
   
         let data = reactive({})
@@ -44,15 +47,21 @@
         var myChart=null
   
         async function getState() {
-            try{
+          data=dataCache.value['nodesgl'][props.feature][props.cluster]
+          if(data == undefined){
+              try{
               data = await dataService.getData(url)
-              console.log(data)
+              // console.log(data)
+              writeData(data,props.feature,props.cluster)
+              // console.log('datacache:',dataCache)
             }catch(error){
               console.error(error)
               return
             }
+          }
         }
         function setData() {
+            loading.value=false
             legend=data.data.data.map((v)=>v.node_name)
             for(var i in legend){
               if(i<5)selected[legend[i]]=true;
@@ -95,6 +104,7 @@
           mounted()
           getState().then(() => {
             nextTick(() => {
+              props.setDisabled(false)
               setData()
               //得到注入模块的钩子
               myChart=$echarts.init(document.getElementById("nsDom"),'dark')
@@ -169,6 +179,8 @@
         beforeDestroy()
         myChart.dispose()
         myChart=null
+        loading.value=true
+        props.setDisabled(true)
       })
       var flag=interval
       //实时更新
@@ -197,6 +209,9 @@
             series:series
           })}
     }, 1000)
+      return{
+      loading
+    }
       }
     }
     }

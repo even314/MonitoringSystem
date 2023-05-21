@@ -1,12 +1,13 @@
 <template >
+    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
     <div v-if="visiable1">
         <h2>异常曲线及出现异常的区域</h2>
         <br/>
         <sourceViewVue :time="time" :ydata="ydata" :errBegin="errBegin" :errEnd="errEnd"/>
     </div>
-    <h2 style="margin: 1.2rem;">相似波动规律的监控指标曲线集合</h2>
+    <h2  v-if="visiable1" style="margin: 1.2rem;">相似波动规律的监控指标曲线集合</h2>
     <div class="item">
-        <el-switch
+        <el-switch  v-if="visiable1" 
         active-color="green"
         inactive-color="red"
         v-model="nomalize"
@@ -16,6 +17,7 @@
         @change="switchChange"
     />
         <div id="Dom" class="chart"></div>
+    </div>
     </div>
 </template>
 <script>        
@@ -31,6 +33,7 @@ components:{
     sourceViewVue
 },
 setup(){
+    const loading=ref(true)
     let $echarts=inject("echarts")
     var myChart=null
 
@@ -130,13 +133,13 @@ setup(){
         }
     }    
 
-    onMounted(()=>{      
+    onMounted(()=>{     
         mounted()
         getState().then(() => {
         nextTick(() => {    
         setData()
         myChart=$echarts.init(document.getElementById("Dom"),'dark')
-
+        loading.value=false 
         myChart.setOption({
         tooltip: {
                 // // 表示不使用默认的“显示”“隐藏”触发规则。
@@ -178,6 +181,7 @@ setup(){
         beforeDestroy();
         myChart.dispose()
         myChart=null
+        loading.value=true
       })
         return{
             time:time,
@@ -186,7 +190,8 @@ setup(){
             errEnd:errEnd,
             visiable1,
             nomalize,
-            switchChange
+            switchChange,
+            loading
                 }
 }
 

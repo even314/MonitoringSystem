@@ -2,12 +2,13 @@
   <div>
     <section class="container">
       <section class="itemLeft">
-                <el-radio-group v-model="radio" @change="radioChange">
+                <el-radio-group v-model="radio" @change="radioChange" :disabled="disabled">
                     <el-radio :label="c1">{{c1}}</el-radio>
                     <el-radio :label="c2">{{c2}}</el-radio>
                 </el-radio-group>
                 <br />
                 <el-switch
+                  :loading="disabled"
                   class="demo"
                   v-model="realTime"
                   active-text="打开实时刷新"
@@ -21,7 +22,7 @@
         <section class="itemRight">
           <itemPage v-if="isAlive"><nodeSgl :cluster="cluster" 
               :feature="this.$route.name" :node_name="node_name" :type="type" 
-              :step="step"  :realTime="realTime" /></itemPage>
+              :step="step"  :realTime="realTime" :setDisabled="setDisabled"/></itemPage>
         </section>
     </section>
   </div>
@@ -34,6 +35,7 @@ import { ref,nextTick } from 'vue'
 const radio = ref("cc-cc408-hya")
 const isAlive = ref(true)
 const realTime=ref(true)
+const disabled= ref(true)
 //刷新子组件
 const reload = () => {
             isAlive.value = false;
@@ -41,6 +43,10 @@ const reload = () => {
                 isAlive.value = true;
             });
             };
+
+const setDisabled=ref(function(state){
+disabled.value=state
+})
 //复选框刷新
 function radioChange(){
             reload()
@@ -65,7 +71,9 @@ export default {
       c2:"cc-cc553-interestPrice",
       radioChange,
       realTime,
-      reload
+      reload,
+      disabled,
+      setDisabled
     }
   }
 
@@ -83,6 +91,8 @@ export default {
         .itemLeft{
             flex: 1;
             background-color: rgba(44, 44, 91, 0.8);
+            padding-top: 2rem;
+            margin-left: .5rem;
         }
         .itemRight{
             flex: 9;

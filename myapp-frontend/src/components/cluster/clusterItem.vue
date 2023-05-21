@@ -1,11 +1,12 @@
 <template lang="">
   <el-switch
-  class="demo"
+    :loading="disabled"
+    class="demo"
     v-model="realTime"
     active-text="打开实时刷新"
     inactive-text="关闭实时刷新"
     active-color="#13ce66"
-  inactive-color="#ff4949"
+    inactive-color="#ff4949"
     size="large"
     @change="reload"
   />
@@ -13,7 +14,7 @@
   <div>
     <itemPage v-if="isAlive"><clusterView :cluster="cluster" 
         :feature="feature" :node_name="node_name" :type="type" 
-        :step="step" :realTime="realTime" /></itemPage>
+        :step="step" :realTime="realTime" :setDisabled="setDisabled"/></itemPage>
   </div>
 </template>
 <script>
@@ -23,6 +24,7 @@ import { ref, nextTick } from 'vue'
 
 const realTime = ref(true)
 const isAlive = ref(true)
+const disabled= ref(true)
 //刷新子组件
 function reload() {
   isAlive.value = false;
@@ -31,6 +33,9 @@ function reload() {
     // console.log(realTime.value)
   })
 }
+ const setDisabled=ref(function(state){
+  disabled.value=state
+})
 export default {
   components: {
     clusterView, itemPage
@@ -48,7 +53,9 @@ export default {
       type: type,
       realTime,
       reload,
-      isAlive
+      isAlive,
+      disabled,
+      setDisabled
     }
   }
 

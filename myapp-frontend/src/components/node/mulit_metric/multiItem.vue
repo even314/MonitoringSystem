@@ -2,13 +2,13 @@
   <div >
       <section class="container">
           <section class="itemLeft">
-              <el-radio-group v-model="cluRadio" @change="radioChange">
+              <el-radio-group v-model="cluRadio" @change="radioChange" :disabled="disabled">
                   <el-radio :label="a">{{a}}</el-radio>
                   <el-radio :label="b">{{b}}</el-radio>
               </el-radio-group>
               <br/>
               <el-select v-model="nodeSelect" class="mySelect1" placeholder="Select" 
-              size="large" @change="selectChange" v-if="isSelectAlive">
+              size="large" @change="selectChange" v-if="isSelectAlive" :disabled="disabled">
                   <el-option
                   v-for="item in selectArr"
                   :key="item"
@@ -18,6 +18,7 @@
               </el-select>
               <br />
                 <el-switch
+                  :loading="disabled"
                   v-model="realTime"
                   class="demo"
                   active-text="打开实时刷新"
@@ -31,7 +32,7 @@
           <section class="itemCenter">
               <itemPage v-if="isAlive"><nodeMulti :cluster="cluster" 
                   :feature="this.$route.name" :node_name="node_name" :type="type" 
-                  :step="step"  :realTime="realTime"/></itemPage>
+                  :step="step"  :realTime="realTime" :setDisabled="setDisabled"/></itemPage>
           </section>
       </section>
   </div>
@@ -60,6 +61,7 @@ export default {
       const isSelectAlive=ref(true)
 
       const realTime=ref(true)
+      const disabled= ref(true)
 
       const reloadCharts = () => {
           isAlive.value = false;
@@ -85,6 +87,9 @@ export default {
       function selectChange(){
           reloadCharts()
       }
+      const setDisabled=ref(function(state){
+      disabled.value=state
+      })
       return{
           cluster:cluRadio,
           feature:"elasticsearch_filesystem_data_available_bytes",
@@ -104,7 +109,10 @@ export default {
           b:"cc-cc553-interestPrice",
           selectArr,
 
-          realTime
+          realTime,
+
+          disabled,
+          setDisabled
       }
   }
 }
@@ -123,8 +131,8 @@ export default {
   }
   //主体容器
   .container{
-      min-width: 1200px;
-      max-width: 2048px;
+      // min-width: 1200px;
+      // max-width: 2048px;
       margin: 0 auto;
       padding:.125rem .125rem 0;
       display: flex;
@@ -132,8 +140,9 @@ export default {
       // flex布局，容器比例
       .itemLeft{
           flex: 1;
-          height: 250px;
+          height: 15rem;
           background-color:rgba(29, 29, 28, 0.408);
+          margin-top: 2rem;
           .el-radio-group,.el-select{
               margin: 20px;
           }

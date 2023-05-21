@@ -1,5 +1,5 @@
 <template >
-    <div>
+    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
         <h2>{{feature}}</h2>
         <div id="nmDom" class="chart">
     </div>
@@ -10,6 +10,7 @@
   import{onMounted,reactive,inject,onBeforeUnmount,nextTick,ref}from "vue"
   import dataService from '../../services/DataService.js'
   import {mounted, beforeDestroy, chart} from "@/utils/resize"
+  import { dataCache,writeData } from "@/utils/storageTools"
 
   export default {
     props:{
@@ -19,11 +20,13 @@
       realTime:{
         type:Boolean,
         default:true
-      }
+      },
+      setDisabled:ref
     },
     setup(props){
+        const loading=ref(true)
         let url='node_multi_params?cluster='+props.cluster+'&feature='+props.feature+'&node_name='+props.node_name
-        console.log(url)
+        // console.log(url)
         let $echarts=inject("echarts");
   
         let data = reactive({})
@@ -37,13 +40,18 @@
         var myChart=null
   
         async function getState() {
-            try{
+            data=dataCache.value['nodemulti'][props.feature][props.cluster][props.node_name]
+            if(data == undefined){
+              try{
               data = await dataService.getData(url)
-              //console.log(data)
+              // console.log(data)
+              writeData(data,props.feature,props.cluster,props.node_name)
+              // console.log('datacache:',dataCache)
             }catch(error){
-              //console.error(error)
+              console.error(error)
               return
             }
+          }
         }
 
         function setData() {
@@ -86,10 +94,11 @@
           mounted()
           getState().then(() => {
             nextTick(() => {
-              setData()
+            props.setDisabled(false)
             //得到注入模块的钩子
             myChart=$echarts.init(document.getElementById("nmDom"),'dark')
-            
+            setData()
+            loading.value=false
             let options={
               tooltip: {
                 trigger: 'axis'
@@ -199,6 +208,7 @@
         beforeDestroy()
         myChart.dispose()
         myChart=null
+        props.setDisabled(true)
       })
 
       var flag=interval
@@ -229,6 +239,9 @@
           })}
     }, 1000)
       }
+      return{
+      loading
+    }
     }
     }
   </script>

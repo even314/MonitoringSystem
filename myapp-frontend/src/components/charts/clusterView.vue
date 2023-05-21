@@ -1,5 +1,5 @@
 <template >
-    <div>
+    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
         <h2>{{feature}}</h2>
         <div id="DomClu" class="chart">
     </div>
@@ -10,6 +10,7 @@
   import{onMounted,reactive,inject,onBeforeUnmount,nextTick,ref}from "vue"
   import dataService from '../../services/DataService.js'
   import {mounted, beforeDestroy, chart} from "../../utils/resize"
+  import { dataCache,writeData } from "@/utils/storageTools"
 
   export default {
     props:{
@@ -22,11 +23,13 @@
       realTime:{
         type:Boolean,
         default:false
-      }
+      },
+      setDisabled:ref
     },
     setup(props){
+        const loading=ref(true)
         let url='cluster?feature='+props.feature
-        console.log(url)
+        // console.log(url)
         let $echarts=inject("echarts")
   
         let data = reactive({})
@@ -40,16 +43,23 @@
         var myChart=null
         
         async function getState() {
-            try{
+            // console.log(dataCache.value)
+            data=dataCache.value['cluster'][props.feature]
+            if(data == undefined){
+              try{
               data = await dataService.getData(url)
-              console.log(data)
+              // console.log(data)
+              writeData(data,props.feature)
+              // console.log('datacache:',dataCache)
             }catch(error){
               console.error(error)
               return
             }
-        }
+          }      
+      }
 
         function setData() {
+           loading.value=false
             legend=data.data.data.map((v)=>v.cluster_name)
             // console.log(legend)
             timeSource=data.data.time
@@ -93,10 +103,10 @@
           mounted()
           getState().then(() => {
             nextTick(() => {
+              props.setDisabled(false)
               setData()
               //得到注入模块的钩子
               myChart=$echarts.init(document.getElementById("DomClu"),'dark')
-              
               myChart.setOption({
                 tooltip: {
                   trigger: 'axis'
@@ -192,7 +202,12 @@
         beforeDestroy()
         myChart.dispose()
         myChart=null
+        loading.value=true
+        props.setDisabled(true)
       })
+      return{
+      loading
+    }
     }
     }
   </script>
