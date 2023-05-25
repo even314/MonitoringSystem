@@ -416,17 +416,30 @@ def get_data_warning():
             data, column = read_csv_column(file_path, ',', 'utf-8')
             for item in data:
                 if float(item[-1]) < Min or float(item[-1]) > Max:
-                    info = ''
-                    # temp={}
-                    for x in item:
-                        if x == 'missing' or x == item[1]:
-                            continue
-                        if x != item[-1]:
-                            info = info + f'{str(x)}_______'
-                        else:
-                            info = info + f'{str(x)}'
+                    # info = ''
+                    # # temp={}
+                    # for x in item:
+                    #     if x == 'missing' or x == item[1]:
+                    #         continue
+                    #     if x != item[-1]:
+                    #         info = info + f'{str(x)}_______'
+                    #     else:
+                    #         info = info + f'{str(x)}'
                     # temp['id']=info        
-                    res.append(info)
+                    info=''
+                    i=-2
+                    j=2
+                    while item[i]!=item[j]:
+                        info+=item[j]
+                        info+='/'
+                        j+=1
+                    info=info[0:-1]
+                    res.append({
+                        'time':item[0],
+                        'feature':item[-2],
+                        'value':str(item[-1]),
+                        'info':info
+                    })
     result = {
         'data': res
     }
@@ -435,7 +448,7 @@ def get_data_warning():
 @app.route('/data/refresh',methods=['GET'])
 def need_to_refresh():
     return jsonify({
-        'type':0
+        'type':1
     })
 
 if __name__ == "__main__":

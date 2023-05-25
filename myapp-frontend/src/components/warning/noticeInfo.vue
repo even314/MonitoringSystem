@@ -13,18 +13,20 @@
             </p>
             <input type="text" v-model="getValue2" />
             <button @click="sub">监测</button>
-            <!-- <button @click="goTo('/history')">查看历史异常信息</button> -->
     </el-container>
-    
-           <li v-if="isAlive" v-for="item in inform.arr" :key="item.id" class="info">
-        {{ item }}
-    </li>
+
+        <el-table :data="inform" stripe style="width: 80%" :table-layout="tableLayout" max-height="80vh"
+        v-loading.fullscreen.lock="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
+            <el-table-column prop="time" label="time" />
+            <el-table-column prop="info" label="info" />
+            <el-table-column prop="value" label="value"  />
+        </el-table>
+
 </template>
 
 <script>
 import dataService from '@/services/DataService.js'
-import { onMounted, nextTick, ref, onBeforeUnmount, reactive } from "vue"
-import { mounted,beforeDestroy } from "@/utils/resize"
+import {ref, reactive } from "vue"
 import { historyList, writeHistory } from '@/utils/storageTools';
 
 export default {
@@ -46,13 +48,13 @@ export default {
         var Min = 0
         var Max = 0
         let url = ''
-        let infoArray = []
         // const inform = reactive([])
-        const inform = reactive({
-            arr: []
-        });
+        const inform = ref(reactive([]))
+        const tableLayout=ref('fixed')
+        const loading=ref(false)
+
         var log = reactive([])
-        const isAlive = ref(false)
+        
         function selectChange(data) {
             feature = data
             console.log("feature" + feature)
@@ -89,10 +91,11 @@ export default {
             }
         ]
         const isSelectAlive = ref(true)
-        const getValue1 = ref()
-        const getValue2 = ref()
+        const getValue1 = ref(0)
+        const getValue2 = ref(1000000)
 
         function sub() {
+            loading.value=true
             Min = getValue1.value
             Max = getValue2.value
             url = 'warning?feature=' + feature + '&Min=' + Min + '&Max=' + Max
@@ -100,62 +103,41 @@ export default {
             getState()
         }
         
-        // function serch(){
-        //     console.log(localStorage.getItem('history'))
-        //     // isAlive=false
-        //     // inform.arr=historyList.value.data
-        //     // nextTick(() => {
-        //     //         isAlive.value = true
-        //     //     })
-        // }
         async function getState() {
-            // isAlive.value=false
+            if(feature==''){
+              loading.value=false
+              return 
+            }
             try {
-                inform.arr = (await dataService.getData(url)).data.data
+                inform.value = (await dataService.getData(url)).data.data
                 // delHistory()
-                writeHistory({
-                    index:inform.arr
-                })
-                console.log(inform.arr)
-                // console.log(log)
+                writeHistory(inform.value)
+                console.log(inform.value)
+                loading.value=false
             } catch (error) {
                 console.error(error)
+                loading.value=false
                 return
             }
         }
-        onMounted(() => {
-            mounted()
-            isAlive.value = false
-            getState().then(() => {
-                nextTick(() => {
-                    isAlive.value = true
-                })
-            })
-        })
-        onBeforeUnmount(() => {
-            beforeDestroy()
-            // inform.dispose()
-            // inform = null
-        })
+
         return {
             nodeSelect,
-            // reLoadInfo,
+            // tableData,
             inform,
             isSelectAlive,
             getValue1,
             getValue2,
             selectChange,
-            onBeforeUnmount,
             feature,
-            infoArray,
-            isAlive,
-            // serch,
             Min,
             Max,
             log,
             getState,
             selectArr,
             sub,
+            tableLayout,
+            loading
         }
     }
 }
@@ -172,8 +154,9 @@ p{
     margin-right: 10px;
 }
 .container{
-    height: 30px;
+    height: 4vh;
     position: center;
+    margin: 1rem;
 }
 .mySelect {
     width: 590px;
@@ -269,5 +252,9 @@ p{
 .el-select .el-input .el-select__caret {
   transform: rotateZ(0deg) !important;
   color: chartreuse;
+}
+.el-table{
+    text-align: center;
+    margin:auto;
 }
 </style>

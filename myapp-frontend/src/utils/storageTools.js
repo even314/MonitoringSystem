@@ -32,9 +32,11 @@ export const dataCache=ref(init(key2,dataInit))
  "yy-mm-dd2": history2
 }**/
 export const writeHistory=(inf)=>{
-    // console.log(historyList)
+    console.log('inf:',inf)
     var time=currentTime()
-    historyList.value[time]=inf
+    if(historyList.value[time]==undefined)historyList.value[time]=[]
+    historyList.value[time]=historyList.value[time].concat(inf)
+    console.log('hl:',historyList)
     localStorage.setItem(key1,JSON.stringify(historyList.value))
 }
 
@@ -80,6 +82,7 @@ function del(key,initializer){
 }
 //删除
 export const delHistory=()=>{
+    console.log('del his')
     del(key1,historyInit)
     historyList.value=historyInit
 }

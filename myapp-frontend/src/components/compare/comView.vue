@@ -1,5 +1,5 @@
 <template >
-    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
+    <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
     <div v-if="visiable1">
         <h2>异常曲线及出现异常的区域</h2>
         <br/>

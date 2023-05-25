@@ -1,5 +1,5 @@
 <template >
-    <div v-loading="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
+    <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(13,130,255,0.5)" element-loading-text="LOADING...">
         <h2>{{feature}}</h2>
         <div id="nsDom" class="chart">
     </div>

@@ -1,59 +1,51 @@
 <template>
-<el-container class="contain">
+<el-container class="container">
     <p class="p1">
          请选择您想查询的历史时间: 
     </p>
             <input type="date" v-model="time" />
             <button @click="show">查询</button>
 </el-container>
-<li v-if="isAlive" v-for="item in history.arr" :key="item.id" class="info">
-        {{ item }}
-    </li>
+    <el-table :data="history" stripe style="width: 80%" :table-layout="tableLayout" max-height="80vh">
+                <el-table-column prop="feature" label="feature" />
+                <el-table-column prop="time" label="time" />
+                <el-table-column prop="info" label="info" />
+                <el-table-column prop="value" label="value"  />
+    </el-table>
 </template>
 <script>
 import { historyList} from '@/utils/storageTools';
-import { nextTick, ref, reactive } from "vue"
+import { h, ref, reactive} from "vue"
+import { ElMessage } from 'element-plus'
+
+
 export default{
     setup(){
-        const time = ref(null)
-        // let date=""
-        const isAlive = ref(false)
-        const history = reactive({
-            arr: []
-        });
-        function show(){
-            isAlive.value=false
-            // date=time.value
-            // console.log(typeof(time.value))
-            // console.log(time.value)
-            // console.log(1)
-            // console.log(typeof(time.value)==typeof(temp))
-            // console.log(typeof(history.arr))
-            // console.log(typeof(history.value[temp].index))
-            // console.log(history.arr)
-            if(historyList.value[time.value]!=null)
-            history.arr=historyList.value[time.value].index
-            else{
-                history.arr=["没有查询到有关记录，请重新确认日期！"]
-            }
-            // console.log(2)
-            nextTick(() => {
-                    isAlive.value = true
-                })
-                
-                console.log(historyList.value[time.value])
+        const time = ref('')
+        const history = ref(reactive([]))
+
+        const errmsg = () => {
+            ElMessage({
+                message: h('p', null,
+                h('i', { style: 'color:red' }, '没有查询到有关记录，请重新确认日期！'),
+                ),
+            })
+            history.value=[]
         }
-        // var temp='2023-05-07'
-        // console.log(temp)
-        // console.log(typeof(temp))
-        // console.log(historyList.value[temp].index)
-        // console.log(time.value)
-         return{
+        function show(){
+            // console.log(historyList.value)
+            if(historyList.value[time.value]!=null){
+            history.value=historyList.value[time.value]
+            // console.log(history.value)
+        }
+            else{
+                errmsg()
+            }
+        }
+        return{
         show,
         time,
         history,
-        isAlive,
-        // date,
     }
     },
 }
@@ -70,7 +62,9 @@ export default{
     font-weight: bold;
     margin-left: 500px;
 }
-.contain{
-    height: 30px;
+.container{
+    height: 4vh;
+    position: center;
+    margin: 1rem;
 }
 </style>
