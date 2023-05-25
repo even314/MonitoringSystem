@@ -1,7 +1,7 @@
 <template>
     <el-container class="container">
-            <el-select v-model="nodeSelect" class="mySelect" placeholder="Select" size="large" @change="selectChange"
-                v-if="isSelectAlive">
+            <el-select v-model="nodeSelect" class="mySelect" placeholder="Select" @change="selectChange"
+                v-if="isSelectAlive" style="width:max-content">
                 <el-option v-for="item in selectArr" :key="item" :label="item.name" :value="item.name" />
             </el-select>
             <p>
