@@ -11,6 +11,12 @@ pip install -r requirements.txt
 ```
 cd myapp-backend
 python main.py
+
+或：
+cd myapp-backend
+python main_db.py
+
+详见./myapp-backend/README.md
 ```
 
 ## 启动前端

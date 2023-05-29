@@ -83,8 +83,8 @@ function del(key,initializer){
 //删除
 export const delHistory=()=>{
     console.log('del his')
-    del(key1,historyInit)
-    historyList.value=historyInit
+    del(key1,{})
+    historyList.value={}
 }
 export const delData=()=>{
     console.log('delData')

@@ -22,12 +22,14 @@
             <el-table-column prop="value" label="value"  />
         </el-table>
 
+
 </template>
 
 <script>
 import dataService from '@/services/DataService.js'
 import {ref, reactive } from "vue"
-import { historyList, writeHistory } from '@/utils/storageTools';
+import { historyList, writeHistory} from '@/utils/storageTools';
+
 
 export default {
     props: {
@@ -52,6 +54,7 @@ export default {
         const inform = ref(reactive([]))
         const tableLayout=ref('fixed')
         const loading=ref(false)
+
 
         var log = reactive([])
         
@@ -110,7 +113,6 @@ export default {
             }
             try {
                 inform.value = (await dataService.getData(url)).data.data
-                // delHistory()
                 writeHistory(inform.value)
                 console.log(inform.value)
                 loading.value=false
@@ -137,7 +139,7 @@ export default {
             selectArr,
             sub,
             tableLayout,
-            loading
+            loading,
         }
     }
 }
