@@ -14,6 +14,7 @@ python main.py
 
 或：
 cd myapp-backend
+python db.py(创建数据库，只需在第一次部署时执行)
 python main_db.py
 
 详见./myapp-backend/README.md

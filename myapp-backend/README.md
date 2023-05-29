@@ -36,6 +36,8 @@ numpy       1.22.4（Numpy最近刚出了2.0版本，使用最新的版本会出
 pandas      1.3.0   
 pathlib     1.0.1
 ```
+## 部署数据库
+python db.py
 
 ## 启动后端
 ```
