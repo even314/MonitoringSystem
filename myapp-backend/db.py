@@ -1,11 +1,11 @@
 """
 将数据存入数据库中
 """
+import os
 import pathlib
 import re
 import sqlite3
 import pandas as pd
-import os
 
 
 def read_csv_column(file, delimiter, encoding):
@@ -73,7 +73,6 @@ def db_single_node():
         # 匹配
         pattern = re.compile(r'(.)*==node.csv', re.I)
         if re.match(pattern, file.name) and file.name.find('elasticsearch_filesystem_data_available_bytes') == -1:
-            print(file.name)
             data, column = read_csv_column(file, ',', 'utf-8')
             for item in data:
                 date = item[0]
@@ -165,10 +164,9 @@ def db_node_name():
 
 
 if __name__ == '__main__':
-    dirs='./database'
-    if not os.path.exists(dirs):
-        os.makedirs(dirs)
-
+    save_path_dir = './database'
+    if not os.path.exists(save_path_dir):
+        os.makedirs(save_path_dir)
     db_cluster()
     db_single_node()
     db_multi_node()
