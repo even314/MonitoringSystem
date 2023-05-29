@@ -5,6 +5,7 @@ import pathlib
 import re
 import sqlite3
 import pandas as pd
+import os
 
 
 def read_csv_column(file, delimiter, encoding):
@@ -164,6 +165,10 @@ def db_node_name():
 
 
 if __name__ == '__main__':
+    dirs='./database'
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+
     db_cluster()
     db_single_node()
     db_multi_node()
