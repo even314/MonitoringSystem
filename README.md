@@ -27,5 +27,10 @@ npm run serve
 ```
 
 ## 端口号说明
+```
 后台默认端口号：2020
 前端默认端口号：8080
+```
+
+## 效果示例
+<div align=center><img src="./ep.gif"></div>
