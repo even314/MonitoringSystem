@@ -372,7 +372,7 @@ def volatility_analysis(num=5):
             'source': {
                 'time': abnormal_time,
                 'value': abnormal_data,
-                'errorTime': ['2023-4-23 15:20:00', '2023-4-23 17:20:00']
+                'errorTime': ['2023/4/23 15:20', '2023/4/23 17:20']
             },
             'result': res
         },
@@ -380,7 +380,7 @@ def volatility_analysis(num=5):
             'source': {
                 'time': abnormal_time,
                 'value': abnormal_data_normal,
-                'errorTime': ['2023-4-23 15:20:00', '2023-4-23 17:20:00']
+                'errorTime': ['2023/4/23 15:20', '2023/4/23 17:20']
             },
             'result': res_normal
         }
